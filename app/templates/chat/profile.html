@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block pagetitle %}Profile{% endblock %}
+{% block nav %}{% endblock %}
+
+{% block content %}
+    <div class="ui middle aligned center aligned grid">
+        <div class="column">
+            <div class="ui attached message">
+                <div class="header ui image">
+                    <img class="image" src="{{ url_for('static', filename='logo.png') }}">
+                    <div class="content">Tell us about you!</div>
+                </div>
+            </div>
+            <form class="profile ui form attached left aligned fluid segment" method="POST"
+                  action="{{ url_for('app.profile') }}">
+                <div class="field ten wide">
+                    <label>Nickname</label>                         <!--or ''如果没取到Nickname, 值为空, 不然为None-->
+                    <input name="nickname" placeholder="Nickname" type="text" value="{{ current_user.nickname or ''}}">
+                </div>
+                <div class="field">
+                    <label>Github</label>
+                    <input name="github" placeholder="https://github.com/greyli/catchat" type="text" value="{{ current_user.github or '' }}">
+                </div>
+                <div class="field">
+                    <label>Website</label>
+                    <input name="website" placeholder="http://greyli.com" type="text" value="{{ current_user.website or ''}}">
+                </div>
+                <div class="field">
+                    <label>Bio</label>
+                    <input name="bio" placeholder="I`m a ........." type="text" value="{{ current_user.bio or '' }}">
+                </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="fields two">
+                    <div class="ui orange submit fluid button">Start Chat</div>
+                </div>
+            </form>
+            {% for error_message in get_flashed_messages() %}
+                <div class="ui message floating warning closeable"></div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

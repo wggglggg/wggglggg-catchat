@@ -8,3 +8,9 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 moment = Moment()
 csrf = CSRFProtect()
+
+
+@login_manager.user_loader
+def load_load(user_id):
+    from app.models import User
+    return User.query.get(int(user_id))
