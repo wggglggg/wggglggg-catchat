@@ -10,6 +10,9 @@
 </head>
 <body>
 <div class="ui labeled icon right vertical inverted demo menu sidebar">
+    <a class="item" href="{{ url_for('app.anonymous') }}">
+        <i class="user secret icon"></i> Anonymous
+    </a>
     <a class="item" href="http://helloflask.com" target="_blank">
         <i class="home icon"></i> HelloFlask.com
     </a>
@@ -39,7 +42,7 @@
                 <span id="user-count">0</span> / {{ user_amount }}
             </div>
         </div>
-        <div class="right menu hide-on-mobile">
+        <div class="right menu">
             {% if not current_user.is_authenticated %}
                 <div class="item">
                     <a class="ui primary button" href="{{ url_for('auth.login') }}">
@@ -71,6 +74,7 @@
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='semantic-ui/semantic.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     <script type="text/javascript">
