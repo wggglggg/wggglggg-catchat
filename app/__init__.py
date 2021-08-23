@@ -1,7 +1,7 @@
 import os, click
 
 from flask import Flask, render_template
-from app.extensions import db, moment, csrf, login_manager, socketio
+from app.extensions import db, moment, csrf, login_manager, socketio, oauth
 from app.blueprints.app import app_bp
 from app.blueprints.auth import auth_bp
 from app.blueprints.admin import admin_bp
@@ -31,6 +31,7 @@ def register_extensions(app):
     moment.init_app(app)
     csrf.init_app(app)
     socketio.init_app(app)
+    oauth.init_app(app)
 
 
 # 注册蓝本

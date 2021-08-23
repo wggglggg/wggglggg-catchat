@@ -66,7 +66,7 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     global online_user
-    if current_user.is_authenticatd and current_user.id in online_user:
+    if current_user.is_authenticated and current_user.id in online_user:
         online_user.remove(current_user)
         emit('user_count',
              {'count': len(online_user)}, broadcast=True)

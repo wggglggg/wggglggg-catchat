@@ -1,3 +1,6 @@
 FLASK_RUN_HOST = 0.0.0.0
 FLASK_ENV = development
 FLASK_DEBUG = True
+
+TWITTER_CLIENT_ID = 'lkjas98j3mf'
+TWITTER_CLIENT_SECRET = 'lkjasdf3asdfas'

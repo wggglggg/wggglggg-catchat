@@ -15,6 +15,7 @@ eventlet = "*"
 flask-socketio = "*"
 python-engineio = "*"
 python-socketio = "*"
+flask-oauthlib = "*"
 
 [dev-packages]
 

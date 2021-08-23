@@ -38,7 +38,24 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="ui error message"></div>
             </form>
-
+            {% for error_message in get_flashed_messages() %}
+                <div class="ui message floating warning closeable">
+                    <i class="close icon"></i>
+                    <div>{{ error_message }}</div>
+                </div>
+            {% endfor %}
+            <div class="ui horizontal divider">Or sign in with</div>
+            <div class="ui message">
+                <a class="icon" href="{{ url_for('oauth.oauth_login', provider_name='github') }}">
+                    <i class="github big icon black"></i>
+                </a>
+                <a class="icon" href="{{ url_for('oauth.oauth_login', provider_name='google') }}">
+                    <i class="google big icon red"></i>
+                </a>
+                <a class="icon" href="{{ url_for('oauth.oauth_login', provider_name='twitter') }}">
+                    <i class="twitter big icon blue"></i>
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}
