@@ -19,6 +19,8 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'wggglggg-catchat.db'))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    CATCHAT_MESSAGE_PER_PAGE = 15
+
 
 # 开发者配置
 class DevelopmentConfig(BaseConfig):

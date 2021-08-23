@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, redirect
+from flask import Blueprint, render_template, url_for, redirect, request, current_app
 from app.models import Message, User
 from app.forms import ProfileForm
 from flask_login import current_user, login_required
@@ -14,7 +14,8 @@ online_user = []                # 用来装在线用户列表
 # 主页
 @app_bp.route('/')
 def home():
-    messages = Message.query.order_by(Message.timestamp.asc())
+    amount = current_app.config['CATCHAT_MESSAGE_PER_PAGE']     # 数据库里的时间应该是utc时间, 网页上的是本地 时间
+    messages = Message.query.order_by(Message.timestamp.asc())[-amount:]  # 切片从最后面-15切到最后一位
     user_amount = User.query.count()
     return render_template('chat/home.html', messages=messages, user_amount=user_amount)
 
@@ -88,3 +89,14 @@ def new_anonymous_message(message_body):
 @app_bp.route('/anonymous')
 def anonymous():
     return render_template('chat/anonymous.html')
+
+
+# 获取消息分布记录
+@app_bp.route('/get_messages')
+def get_messages():
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['CATCHAT_MESSAGE_PER_PAGE']
+    pagination = Message.query.order_by(Message.timestamp.desc()).paginate(page, per_page=per_page)
+    messages = pagination.items
+
+    return render_template('chat/_messages.html', messages=messages[::-1])

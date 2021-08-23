@@ -100,6 +100,36 @@ $(document).ready(function () {
         console.log('data.count', data.count)
     });
 
+    // scroll监听函数
+    let page = 1;
+    function load_messages() {
+        let $messages = $('.messages');
+        let position = $messages.scrollTop();       // 判断当前滚动条的位置在哪
+        if (position === 0 && socket.nsp !== '/anonymous') {// nsp=namespace 命名空间, 排除掉/anonymaous空间
+            page++;
+            $('.ui.loader').toggleClass('active');  // 如果侧面滚动条在0位置, 就显示loading
+            $.ajax({
+                url: messages_url,                  // 打开get_messages网址, 激活get_messages函数
+                type: 'GET',
+                data: {page: page},
+                success: function (data) {
+                    let before_height = $messages[0].scrollHeight;  // 0是messages里的一个key, 能获取到窗口当前的高度Px
+                    $(data).prependTo('.messages').hide().fadeIn(2000);  //插入消息, 插入时会隐藏, 再淡显示延时1000
+                    let after_height = $messages[0].scrollHeight;   // 加入消息后, 再获取高度
+                    flask_moment_render_all();                      // 后加的消息后面跟时间戳, 不然新刷新的消息没时间
+                    $messages.scrollTop(after_height - before_height); // 加入后的高度 - 加入前的高度, 新刷新消息的高度
+                    $('.ui.loader').toggleClass('active');
+                    activateSemantics();
+                },
+                error: function () {
+                    alert('No more messages.');                     // 如果消息已经全部更新出来, 就显示"没有多余的消息了"
+                    $('.ui.loader').toggleClass('active');
+                }
+            });
+        }
+    }
+    $('.messages').scroll(load_messages);
+
     // 初始化 导入js后会执行init初始化
     function init() {
         activateSemantics();
