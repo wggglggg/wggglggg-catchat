@@ -3,7 +3,7 @@ from app.models import Message, User
 from app.forms import ProfileForm
 from flask_login import current_user, login_required
 from app.extensions import db, socketio
-from app.utils import flash_errors
+from app.utils import flash_errors, to_html
 from flask_socketio import emit
 
 app_bp = Blueprint('app', __name__)
@@ -47,11 +47,18 @@ def get_profile(user_id):
 # 发送新消息
 @socketio.on('new message')
 def new_message(message_body):
-    message = Message(author=current_user._get_current_object(), body=message_body)
+    clean_html = to_html(message_body)
+    message = Message(author=current_user._get_current_object(), body=clean_html)
     db.session.add(message)
     db.session.commit()
     emit('new message',
-         {'message_html': render_template('chat/_message.html', message=message)}, broadcast=True)
+         {
+             'message_html': render_template('chat/_message.html', message=message ),
+             'message_body': clean_html,
+             'gravatar': current_user.gravatar,
+             'nickname': current_user.nickname,
+             'user_id': current_user.id,
+          }, broadcast=True)
 
 
 # 更新在线人数
@@ -68,7 +75,7 @@ def connect():
 def disconnect():
     global online_user
     if current_user.is_authenticated and current_user.id in online_user:
-        online_user.remove(current_user)
+        online_user.remove(current_user.id)
         emit('user_count',
              {'count': len(online_user)}, broadcast=True)
 
@@ -80,8 +87,10 @@ def new_anonymous_message(message_body):
     nickname = 'Anonymous'                                  # 别名都为anonymous
     emit('new message',
          {'message_html': render_template('chat/_anonymous_message.html',
-                                          message=message_body, avatar=avatar,
-                                          nickname=nickname)},
+                                          message=message_body,
+                                          avatar=avatar,
+                                          nickname=nickname,
+                                          )},
          broadcast=True, namespace='/anonymous')
 
 

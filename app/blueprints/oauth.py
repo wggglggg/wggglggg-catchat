@@ -25,10 +25,10 @@ github = oauth.remote_app(
 
 google = oauth.remote_app(
     name='google',
-    consumer_key=os.getenv('GOOGLE_CLIENT_ID'),
-    consumer_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+    consumer_key=os.getenv('GOOGLE_CLIENT_IDD'),
+    consumer_secret=os.getenv('GOOGLE_CLIENT_SECRETD'),
     request_token_params={'scope': 'email'},
-    base_url='https://www.googleapis.com/oquth2/v1',
+    base_url='https://www.googleapis.com/oauth2/v1/',
     request_token_url=None,
     access_token_method='POST',
     access_token_url='https://accounts.google.com/o/oauth2/token',
@@ -78,7 +78,6 @@ def get_social_profile(provider, access_token):
 
     profile_endpoint = profile_endpoints[provider.name]
     response = provider.get(profile_endpoint, token=access_token)
-    print('response:', response)
 
     if provider.name == 'twitter':
         username = response.data.get('name')

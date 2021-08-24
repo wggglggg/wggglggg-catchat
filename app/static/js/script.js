@@ -1,6 +1,7 @@
 $(document).ready(function () {
     const ENTER_KEY = 13;
     const popupLoading = '<i class="notched circle circle loading icon green"></i>Loading...';
+    let message_count = 0;
 
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
@@ -88,6 +89,18 @@ $(document).ready(function () {
     // 处理事件函数 , 接收app.py里的new_message发送的emit()里的的 new message事件, 消息显示 到上方聊天框
     // app.py 函数里emit(), 是什么, Js里就接受什么
     socket.on('new message', function (data) {
+        message_count++;
+        console.log('messcount:', message_count)
+        if (!document.hasFocus()) {                 // 如果你在浏览别的窗口, 没有浏览聊天室口, 就在窗口title显示多少条未读
+            document.title = '<' + message_count + '>' + 'CatChat';
+            console.log('!document.hasFocus', data.user_id !== current_user_id);
+        }
+
+        if (data.user_id !== current_user_id) {     // 如果数据拿的用户 不是 当前用户
+            console.log(data.user_id !== current_user_id);
+            messageNotify(data);
+        }
+
         $('.messages').append(data.message_html);       // 把新消息append 到总Messages的尾部
         flask_moment_render_all();                      // 将消息中的 时间戳 渲染到网页上
         scrollToBottom();                               //再次计算消息框上到下的距离px, 滚动到最下面
@@ -130,11 +143,51 @@ $(document).ready(function () {
     }
     $('.messages').scroll(load_messages);
 
+    $('#show-help-modal').on('click', function () {
+        $('.ui.modal.help').modal({blurring:true}).modal('show')        //blurring:true  就是开启模糊modal
+    });
+
+    // 发送消息提醒
+    function messageNotify(data) {          // 如果没权限 , 就申请 权限 , 如果有权限就发送消息, 去掉特殊符号
+        if (Notification.permission !== 'granted')
+            Notification.requestPermission();
+        else {
+            var notification = new Notification('Message from' + data.nickname, {
+               icon: data.gravatar,         //  要发送的消息
+               body: data.message_body.replace(/(<([^>]+)>)/ig, ""), // 将标点括号都去掉
+            });
+
+            notification.onclick = function () {            // 提醒消息被 单击为打开主页
+                window.open(root_url);
+            };
+            setTimeout(function () {
+                notification.close()
+            }, 4000)
+        }
+    }
+
     // 初始化 导入js后会执行init初始化
     function init() {
+        $(window).focus(function () {           // 当你再次浏览catchat窗口时, 把消息提醒给清0
+            message_count = 0;
+            document.title = 'wggglggg-catchat'
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!Notification) {                    //  创建一个监听器, 浏览器打开后, 如果notification不支持, 就提示
+                alert('Desktop notifications not available in your browser');
+                console.log('!Notification');
+                return;
+            }
+
+            if (Notification.permission !== 'granted')        // 如果发现浏览器权限是不允许 , 就申请 权限
+                Notification.requestPermission();
+
+        });
+        console.log('notify');
+
         activateSemantics();
         scrollToBottom();
-
     }
 
     init();
