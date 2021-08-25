@@ -25,8 +25,8 @@ github = oauth.remote_app(
 
 google = oauth.remote_app(
     name='google',
-    consumer_key=os.getenv('GOOGLE_CLIENT_IDD'),
-    consumer_secret=os.getenv('GOOGLE_CLIENT_SECRETD'),
+    consumer_key=os.getenv('GOOGLE_CLIENT_ID'),
+    consumer_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
     request_token_params={'scope': 'email'},
     base_url='https://www.googleapis.com/oauth2/v1/',
     request_token_url=None,
