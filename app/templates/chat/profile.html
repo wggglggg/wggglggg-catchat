@@ -36,6 +36,8 @@
             </form>
             {% for error_message in get_flashed_messages() %}
                 <div class="ui message floating warning closeable"></div>
+                <i class="close icon"></i>
+                <div>{{ error_message }}</div>
             {% endfor %}
         </div>
     </div>

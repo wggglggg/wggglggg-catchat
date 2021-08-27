@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, redirect, request, current_app
+from flask import Blueprint, render_template, url_for, redirect, request, current_app, abort
 from app.models import Message, User
 from app.forms import ProfileForm
 from flask_login import current_user, login_required
@@ -109,3 +109,15 @@ def get_messages():
     messages = pagination.items
 
     return render_template('chat/_messages.html', messages=messages[::-1])
+
+
+# 删除消息
+@app_bp.route('/delete_message/<int:message_id>', methods=['DELETE'])
+def delete_message(message_id):
+    message = Message.query.get_or_404(message_id)
+    if current_user != message.author and not current_user.is_admin:
+        abort(403)
+
+    db.session.delete(message)
+    db.session.commit()
+    return '', 204

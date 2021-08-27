@@ -47,6 +47,13 @@
             </div>
         </div>
         <div class="right menu">
+            {% if current_user.is_authenticated %}
+                <div class="item">
+                    <button class="ui button orange basic" id="show-snippet-modal">Creat Snippets</button>
+                </div>
+            {% endif %}
+        </div>
+        <div class="right menu">
             {% if not current_user.is_authenticated %}
                 <div class="item">
                     <a class="ui primary button" href="{{ url_for('auth.login') }}">
@@ -122,6 +129,20 @@
     </div>
     <div class="actions">
         <button class="ui button cancel">Close</button>
+    </div>
+</div>
+
+<!--Snippet Modal-->
+<div class="ui modal small snippet">
+    <div class="header">Create code or text snippets</div>
+    <div class="content">
+        <div class="ui form">
+            <textarea id="snippet-textarea"rows="10"></textarea>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="ui button cancel">Cancel</button>
+        <button class="ui button blue approve" id="snippet-button">Create</button>
     </div>
 </div>
 

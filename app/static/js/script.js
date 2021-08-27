@@ -14,6 +14,7 @@ $(document).ready(function () {
     // 点击弹出右sidebar
     function activateSemantics() {
         $('.ui.checkbox').checkbox();
+        $('.ui.dropdown').dropdown();
 
         $('#toggle-sidebar').on('click', function () {
            $('.menu.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
@@ -44,6 +45,9 @@ $(document).ready(function () {
             }
         });
 
+        $('#show-snippet-modal').on('click', function () {
+            $('.ui.modal.snippet').modal({blurring: true}).modal('show')
+        });
 
     }
 
@@ -186,9 +190,56 @@ $(document).ready(function () {
         });
         console.log('notify');
 
+        // 短消息发送
+        $('#snippet-button').on('click', function () {
+            let $snippet_textarea = $('#snippet-textarea');
+            let message = $snippet_textarea.val();
+            if (message.trim() !=='') {
+                socket.emit('new message', message);
+                $snippet_textarea.val('');
+            }
+        });
+
+        // 回复消息
+        $('.quote-button').on('click', function () {
+           let $textarea = $('#message-textarea');
+           let message = $(this).parent().parent().parent().find('.message-body').text(); // 被回复的消息
+            $textarea.val('>' + message + '\n\n');
+            $textarea.val($textarea.val()).focus();
+        });
+
         activateSemantics();
         scrollToBottom();
     }
+
+    $('.delete-button').on('click', function () {
+        let $this = $(this);
+        $.ajax({
+            type: 'DELETE',
+            url: $this.data('href'),
+            success: function () {
+                $this.parent().parent().parent().remove();
+            },
+            error: function () {
+                alert('Oops, something was wrong')
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-user-btn', function () {
+        let $this = $(this);
+        $.ajax({
+            type: 'DELETE',
+            url: $this.data('href'),
+            success: function () {
+                $this.parent().parent().parent().parent().remove();
+                alert('Success, this user is gone!')
+            },
+            error: function () {
+                alert('Oops, something was wrong')
+            }
+        });
+    });
 
     init();
 });

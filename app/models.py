@@ -1,7 +1,8 @@
 from app.extensions import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
+from flask import current_app
 
 import hashlib
 
@@ -44,6 +45,16 @@ class User(UserMixin, db.Model):
     @property
     def gravatar(self):
         return 'https://gravatar.com/avatar/%s?d=monsterid' % self.email_hash
+
+    @property
+    def is_admin(self):
+        return self.email == current_app.config['CATCHAT_ADMIN_EMAIL']
+
+
+class Guest(AnonymousUserMixin):
+    @property
+    def is_admin(self):
+        return False
 
 
 # 消息

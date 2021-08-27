@@ -21,6 +21,8 @@ class BaseConfig:
 
     CATCHAT_MESSAGE_PER_PAGE = 15
 
+    CATCHAT_ADMIN_EMAIL = os.getenv('CATCHAT_ADMIN_EMAIL', 'wggglggg@wggglggg.com')
+
 
 # 开发者配置
 class DevelopmentConfig(BaseConfig):
